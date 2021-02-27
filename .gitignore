@@ -51,3 +51,7 @@ vmwgfx/*.h
 vmwgfx/x86
 vmwgfx/machine
 vmwgfx/export_syms
+bochs/*.h
+bochs/x86
+bochs/machine
+bochs/export_syms

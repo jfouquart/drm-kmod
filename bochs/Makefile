@@ -1,13 +1,20 @@
 # $FreeBSD$
 
-SRCDIR=	${.CURDIR}
+SRCDIR=	${.CURDIR:H}/drivers/gpu/drm/bochs
 
-.PATH:	${SRCDIR}
+.PATH:	${SRCDIR} ${SRCDIR}/../
 
-KMOD=	dummygfx
-SRCS=	\
-	dummygfx_drv.c \
-	dummygfx_debugfs.c
+.include "../kconfig.mk"
+
+KMOD= 	bochs
+SRCS= 	\
+	bochs_drv.c \
+	bochs_hw.c \
+	bochs_kms.c \
+	bochs_mm.c \
+	drm_simple_kms_helper.c \
+	drm_gem_vram_helper.c \
+	drm_vram_mm_helper.c
 
 CLEANFILES+= ${KMOD}.ko.full ${KMOD}.ko.debug
 
@@ -18,10 +25,11 @@ CFLAGS+= -I${.CURDIR:H}/linuxkpi/dummy/include
 CFLAGS+= -I${.CURDIR:H}/include
 CFLAGS+= -I${.CURDIR:H}/include/drm
 CFLAGS+= -I${.CURDIR:H}/include/uapi
-CFLAGS+= -I${SRCDIR:H}/drivers/gpu
+CFLAGS+= -I${SRCDIR:H:H}
 
 CFLAGS+= '-DKBUILD_MODNAME="${KMOD}"'
-CFLAGS+= '-DLINUXKPI_PARAM_PREFIX=dummygfx_' -DLINUXKPI_VERSION=50000
+CFLAGS+= '-DLINUXKPI_PARAM_PREFIX=${KMOD}_' -DDRM_SYSCTL_PARAM_PREFIX=_${KMOD} -DLINUXKPI_VERSION=50000
+CFLAGS+= -DCONFIG_PM_SLEEP
 CFLAGS+= ${KCONFIG:C/(.*)/-DCONFIG_\1/}
 
 SRCS	+=			\
@@ -37,8 +45,9 @@ SRCS	+=			\
 	fb_if.h			\
 	device_if.h		\
 	pci_if.h		\
+	pci_iov_if.h		\
 	vnode_if.h
 
-.include <bsd.kmod.mk>
+CWARNFLAGS.bochs_hw.c= -Wno-pointer-arith -Wno-format
 
-CWARNFLAGS += -Wno-cast-qual
+.include <bsd.kmod.mk>
