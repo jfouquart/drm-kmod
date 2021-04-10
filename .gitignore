@@ -36,6 +36,10 @@ radeon/*.h
 radeon/x86
 radeon/machine
 radeon/export_syms
+qxl/*.h
+qxl/x86
+qxl/machine
+qxl/export_syms
 ttm/*.h
 ttm/x86
 ttm/machine

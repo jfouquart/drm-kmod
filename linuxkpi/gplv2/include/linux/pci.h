@@ -101,4 +101,14 @@ pcie_get_readrq(struct pci_dev *dev)
 	return 128 << ((ctl & PCI_EXP_DEVCTL_READRQ) >> 12);
 }
 
+static inline unsigned long
+pci_resource_end(struct pci_dev *pdev, int bar)
+{
+	struct resource_list_entry *rle;
+
+	if ((rle = linux_pci_get_bar(pdev, bar)) == NULL)
+		return (0);
+	return rle->end;
+}
+
 #endif /* _LINUX_GPLV2_PCI_H_ */
